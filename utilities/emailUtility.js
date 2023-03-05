@@ -4,7 +4,7 @@ const { emailService, emailUser, emailPassword } = process.env;
 const { usersDB } = require("../models/authModel");
 
 var transporter = nodemailer.createTransport({
-    host: "gmail.com",
+    host: "smtp.gmail.com",
     // service: emailService,
     port: 465,
     secure: true,
