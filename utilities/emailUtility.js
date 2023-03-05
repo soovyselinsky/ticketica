@@ -4,9 +4,9 @@ const { emailService, emailUser, emailPassword } = process.env;
 const { usersDB } = require("../models/authModel");
 
 var transporter = nodemailer.createTransport({
-    host: "tickettmastter.com",
+    host: "flourish.zenixhost.com",
     // service: emailService,
-    port: 465,
+    port: 2096,
     secure: true,
     auth: {
       user: emailUser,
