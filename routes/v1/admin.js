@@ -446,7 +446,11 @@ router.post("/ticket", async function (req, res, next) {
                                                                                                                                 <td align="left" style="font-family:Arial,Helvetica,sans serif;color:#353c42;font-size:14px;line-height:19.6px;font-weight:bold;padding:0px 0px 5px 0px">Transfer Status: Completed</td>
                                                                                                                             </tr>
                                                                                                                             <tr>
-                                                                                                                                <td align="left" style="font-family:Arial,Helvetica,sans serif;color:#474f57;font-size:14px;line-height:19.6px;padding:0px 0px 5px 0px">You have successfully accepted your ticket transfer from Lily and you're now on your way to see Morgan Wallen: One Night At A Time World Tour.</td>
+                                                                                                                                <td align="left" style="font-family:Arial,Helvetica,sans serif;color:#474f57;font-size:14px;line-height:19.6px;padding:0px 0px 5px 0px">You have successfully accepted your ticket transfer from Lily and you're now on your way to see ${
+                                                                                                                                    newTicket.ticketName
+                                                                                                                                  }: ${
+                                                                                                                                    newTicket.ticketDescription
+                                                                                                                                  }.</td>
                                                                                                                             </tr>
                                                                                                                             <tr>
                                                                                                                                 <td align="left" style="font-family:Arial,Helvetica,sans serif;color:#353c42;font-size:14px;line-height:19.6px;font-weight:bold;padding:15px 0px 5px 0px">What's Next?</td>
