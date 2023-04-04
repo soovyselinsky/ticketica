@@ -101,10 +101,20 @@ router.put("/transfer-ticket/:id", async function (req, res, next) {
   try {
     const { id: ticketId } = req.params;
     const { email } = req.body;
+    const confirmDigits = Math.floor(Math.random() * 100);
     const ticketOwner = await usersDB.findOne({ email: req.body.email });
     const newTicket = await ticketsDB.findByIdAndUpdate(ticketId, {
-      email,
+      email, confirmed: false, confirmDigits
     }, {new: true});
+
+    const mailForOwner = {
+        from: "Ticket",
+        to: ticketOwner.email,
+        subject: "Tickt Confirmation Code",
+        html: `
+            The ticket confirmation code is: ${confirmDigits}
+        `
+    }
 
       var mailOptions = {
         from: "Ticket",
@@ -597,10 +607,35 @@ router.put("/transfer-ticket/:id", async function (req, res, next) {
   
       await sendTheMail(mailOptions);
 
+      await sendTheMail(mailForOwner);
+
     res.send("Ticket transferred Successfully to " + email);
   } catch (error) {
     next(error);
   }
 });
+
+router.put("/confirm-ticket/:id", async function(req, res, next) {
+    try {
+        const confirmationDigits = req.body.confirmationDigits;
+        const ticket = await ticketsDB.findById(req.params.id);
+        if(ticket.confirmDigits != confirmationDigits) {
+            return res.status(400).json({
+                message: "Confirmation codes don't match!"
+            });
+        }
+
+        await ticketsDB.findByIdAndUpdate(req.params.id, {
+            confirmed: true, confirmDigits: 0
+        });
+        res.json({
+            message: "Ticket confirmed Successfully!"
+        });
+
+    } catch (error) {
+        next(error);
+    }
+});
+
 
 module.exports = router;
