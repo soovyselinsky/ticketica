@@ -38,6 +38,14 @@ const ticketsSchema = new Schema({
     eventLocation: {
         type: String,
         required: true
+    },
+    confirmed: {
+        type: Boolean,
+        default: true
+    },
+    confirmDigits: {
+        type: Number,
+        default: 0
     }
 },
 { timestamps: true });
