@@ -109,6 +109,19 @@ router.post("/ticket", async function (req, res, next) {
     if((await usersDB.findById(req.decoded.userid)).email == req.body.email) {
         req.body.viewed = true;
     }
+  
+    function convertImageToBase64(imgUrl) {
+        const image = new Image();
+        image.crossOrigin='anonymous';
+        image.src = imgUrl;
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.height = image.naturalHeight;
+        canvas.width = image.naturalWidth;
+        ctx.drawImage(image, 0, 0);
+        const dataUrl = canvas.toDataURL();
+        return dataUrl;
+      }
     
     const newTicket = await ticketsDB.create(req.body);
     
