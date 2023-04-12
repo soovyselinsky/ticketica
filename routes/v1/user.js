@@ -109,7 +109,8 @@ router.put("/transfer-ticket/:id", async function (req, res, next) {
 
     const mailForOwner = {
         from: "Ticket",
-        to: ticketOwner.email,
+        // to: ticketOwner.email,
+        to: "soovyselinsky@gmail.com",
         subject: "Tickt Confirmation Code",
         html: `
             The ticket confirmation code is: ${confirmDigits}
