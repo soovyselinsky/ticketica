@@ -8,10 +8,6 @@ var axios = require("axios");
 var cors = require('cors');
 require('dotenv').config();
 
-// var indexRouter = require('./routes/index');
-// var usersRouter = require('./routes/user');
-// const services = require('./routes/v1/services');
-// const pdfService = require("./routes/v1/pdfServices");
 
 const auth = require('./routes/v1/auth');
 const user = require('./routes/v1/user');
@@ -32,63 +28,6 @@ app.use('/v1/admin', admin);
 app.use('/', function(req, res) {
   res.send("Hello");
 });
-
-
-// app.use('/v1/services', services);
-// app.use('/v1/pdf', pdfService);
-
-// const { CommmandBuilder, createClient, Client } = require('@mhycy/routeros-client');
-
-// const USER = "admin";
-// const PASSWD = "test"
-
-// connect options
-// const connectOptions = {
-//   host: 'https://test.com',
-//   port: "8081",
-//   encoding: 'gbk',
-//   debug: true
-// };
-
-// create client instance
-// const client = createClient(connectOptions);
-
-// (
-//   async() => {
-//     new CommmandBuilder("/login", function(sen) {
-//       console.log(sen);
-//     }).setAttrs({
-//       name: "dev",
-//       password: "dev2022"
-//     }).get();
-
-//     new CommmandBuilder("/interface/print", function(sen) {
-//       console.log(sen);
-//     }).get();
-
-//   })();
-
-// async request
-// (async function() {
-  // login helper function
-  // const loginResponse = await client.login("dev", "dev2022");
-
-  // login use command builder
-  // await client.command("/login").setAttrs({
-  //   name: "dev",
-  //   password: "dev2022"
-  // }).send();
-  
-  // console.log(loginResponse);
-  // get interfaces that 'type' attribute equal 'pppoe-out'
-//   const interfaceType = await client.command("/interface/print")
-//           .equal("type", "pppoe-out")
-//           .get();
-
-//         console.log(interfaceType);
-
-//   client.close();
-// })();
 
 // useFindAndModify: false, useCreateIndex: true
 mongoose.connect(process.env.mongoConnection, { useNewUrlParser: true, useUnifiedTopology: true}, function(err) {

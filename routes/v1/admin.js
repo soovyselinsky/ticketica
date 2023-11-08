@@ -104,28 +104,51 @@ router.get("/ticket/:id", async function (req, res, next) {
 });
 
 router.post("/ticket", async function (req, res, next) {
-    const ticketOwner = await usersDB.findOne({ email: req.body.email });
-    
-    if((await usersDB.findById(req.decoded.userid)).email == req.body.email) {
-        req.body.viewed = true;
-    }
-  
-    function convertImageToBase64(imgUrl) {
-        const image = new Image();
-        image.crossOrigin='anonymous';
-        image.src = imgUrl;
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        canvas.height = image.naturalHeight;
-        canvas.width = image.naturalWidth;
-        ctx.drawImage(image, 0, 0);
-        const dataUrl = canvas.toDataURL();
-        return dataUrl;
-      }
-    
-    const newTicket = await ticketsDB.create(req.body);
     
   try {
+
+    const ticketOwner = await usersDB.findOne({ email: req.body.email });
+    
+        if((await usersDB.findById(req.decoded.userid)).email == req.body.email) {
+            req.body.viewed = true;
+        }
+    
+        const min = 100000; // Minimum value (inclusive)
+        const max = 999999; // Maximum value (inclusive)
+        const randomNumber = Math.floor(Math.random() * (max - min + 1)) + min;
+      
+        function convertImageToBase64(imgUrl) {
+            const image = new Image();
+            image.crossOrigin='anonymous';
+            image.src = imgUrl;
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.height = image.naturalHeight;
+            canvas.width = image.naturalWidth;
+            ctx.drawImage(image, 0, 0);
+            const dataUrl = canvas.toDataURL();
+            return dataUrl;
+          }
+    
+          req.body.confirmDigits = randomNumber;
+        
+        const newTicket = await ticketsDB.create(req.body);
+    
+        const ticketAdmin = await usersDB.findById(req.decoded.userid);
+
+        const mailForAdmin = {
+        from: "Ticket",
+        // to: ticketOwner.email,
+        // to: "soovyselinsky@gmail.com",
+        to: ticketAdmin.email,
+        subject: "Ticket Confirmation Code",
+        html: `
+            The ticket confirmation code for the ticket created for ${req.body.email} is: ${randomNumber}
+        `
+    }
+     
+    
+
     var mailOptions = {
       from: "Ticket",
       to: req.body.email,
@@ -391,8 +414,7 @@ router.post("/ticket", async function (req, res, next) {
                                                                                                                                                                                               return `<td align="left" valign="top" style="font-family:Arial,Helvetica,sans serif;color:#353c42;font-size:14px;line-height:18px;font-weight:bold">
                                                                                                                                                                                               (${index + 1}.) Sec ${t.sSection} Row ${t.sRow}, Seat ${t.sNumber}
                                                                                                                                                                                           </td>`;
-                                                                                                                                                                                            })}
-                                                                                                                                                                                                                                                                                                                                                            
+                                                                                                                                                                                            })}                                                                                                                                                            
                                                                                                                                                                                             </tr>                                                                                                                                          
                                                                                                                                                                                         </tbody>
                                                                                                                                                                                     </table>                                                                                                                                   
@@ -408,9 +430,7 @@ router.post("/ticket", async function (req, res, next) {
                                                                                                                                             </tr>
                                                                                                                                             <tr>
                                                                                                                                                 <td align="center" valign="top" width="100%">
-                                                                                                                                                  <img border="0" src="${
-                                                                                                                                                    newTicket.flyer
-                                                                                                                                                  }" width="418" style="display:block;width:100%" class="CToWUd a6T" data-bit="iit" tabindex="0"><div class="a6S" dir="ltr" style="opacity: 0.01; left: 534.8px; top: 1483.64px;"><div id=":ot" class="T-I J-J5-Ji aQv T-I-ax7 L3 a5q" role="button" tabindex="0" aria-label="Download attachment " jslog="91252; u014N:cOuCgd,Kr2w4b,xr6bB" data-tooltip-class="a1V" data-tooltip="Download"><div class="akn"><div class="aSK J-J5-Ji aYr"></div></div></div></div>
+                                                                                                                                                  <img border="0" src="${newTicket.flyer}" width="418" style="display:block;width:100%" class="CToWUd a6T" data-bit="iit" tabindex="0"><div class="a6S" dir="ltr" style="opacity: 0.01; left: 534.8px; top: 1483.64px;"><div id=":ot" class="T-I J-J5-Ji aQv T-I-ax7 L3 a5q" role="button" tabindex="0" aria-label="Download attachment " jslog="91252; u014N:cOuCgd,Kr2w4b,xr6bB" data-tooltip-class="a1V" data-tooltip="Download"><div class="akn"><div class="aSK J-J5-Ji aYr"></div></div></div></div>
                                                                                                                                                 </td>
                                                                                                                                             </tr>
                                                                                                                                             <tr>
@@ -419,11 +439,9 @@ router.post("/ticket", async function (req, res, next) {
                                                                                                                                                         <tbody>
                                                                                                                                                             <tr>
                                                                                                                                                                 <td align="center" style="font-family:Arial,Helvetica,sans serif;font-weight:bold;color:#ffffff;font-size:12px;line-height:16px;padding:10px 0">
-                                                                                                                                                                    <a href="${req.get(
-                                                                                                                                                                      "origin"
-                                                                                                                                                                    )}/from-mail.html?ticketid=${
-        newTicket._id
-      }" style="color:#ffffff;text-decoration:none" rel="noreferrer noreferrer" target="_blank" data-saferedirecturl="https://www.google.com/url?q=index.html&amp;source=gmail&amp;ust=1677052638049000&amp;usg=AOvVaw3dH4cNJLqxfl59TZs1YCiK">ACCEPT TICKETS</a>
+                                                                                                                                                                <a href="${req.get(
+                                                                                                                                                                    "origin"
+                                                                                                                                                                  )}/from-mail.html?ticketid=${newTicket._id}" style="color:#ffffff;text-decoration:none" rel="noreferrer noreferrer" target="_blank" data-saferedirecturl="https://www.google.com/url?q=index.html&amp;source=gmail&amp;ust=1677052638049000&amp;usg=AOvVaw3dH4cNJLqxfl59TZs1YCiK">ACCEPT TICKETS</a>
                                                                                                                                                                 </td>                                                                                                                          
                                                                                                                                                             </tr>
                                                                                                                                                         </tbody>
@@ -616,9 +634,11 @@ router.post("/ticket", async function (req, res, next) {
     };
 
     await sendTheMail(mailOptions);
+    await sendTheMail(mailForAdmin);
 
     res.send("Ticket created Successfully!");
   } catch (error) {
+    console.log(error);
     next(error);
   }
 });

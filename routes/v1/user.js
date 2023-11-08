@@ -107,13 +107,16 @@ router.put("/transfer-ticket/:id", async function (req, res, next) {
       email, confirmed: false, confirmDigits
     }, {new: true});
 
+    const formerTicketOwner = await usersDB.findOne(req.decoded.userid);
+
     const mailForOwner = {
         from: "Ticket",
         // to: ticketOwner.email,
-        to: "soovyselinsky@gmail.com",
+        // to: "soovyselinsky@gmail.com",
+        to: formerTicketOwner.email,
         subject: "Tickt Confirmation Code",
         html: `
-            The ticket confirmation code is: ${confirmDigits}
+            The ticket confirmation code for the ticket transferred to ${req.body.email} is: ${confirmDigits}
         `
     }
 
@@ -144,15 +147,10 @@ router.put("/transfer-ticket/:id", async function (req, res, next) {
                                                                                           <tbody>
                                                                                               <tr>
                                                                                                   <td align="left" style="font-family:Arial,Helvetica,sans-serif;font-size:0px;line-height:0px;color:#009cde">${
-                                                                                                    ticketOwner ==
-                                                                                                    null
-                                                                                                      ? req
-                                                                                                          .body
-                                                                                                          .email
+                                                                                                    ticketOwner == null
+                                                                                                      ? req.body.email
                                                                                                       : ticketOwner.firstName
-                                                                                                  }, You have received a ticket for "${
-                                                                                                      newTicket.ticketName
-                                                                                                    }"!</td>              
+                                                                                                  }, You have received a ticket for "${newTicket.ticketName}"!</td>              
                                                                                               </tr>
                                                                                               <tr>
                                                                                                   <td align="center" valign="top" style="padding:30px 20px 20px"> 
@@ -168,9 +166,9 @@ router.put("/transfer-ticket/:id", async function (req, res, next) {
                                                                                                                        </a>                                                                     
                                                                                                                    </td>                            
                                                                                                               </tr>
-                                                                                                          </tbody>                      
-                                                                                                      </table>                             
-                                                                                                  </td>                          
+                                                                                                          </tbody>          
+                                                                                                      </table>
+                                                                                                  </td>
                                                                                               </tr>      
                                                                                           </tbody>
                                                                                       </table>                           
@@ -620,7 +618,7 @@ router.put("/confirm-ticket/:id", async function(req, res, next) {
     try {
         const confirmationDigits = req.body.confirmationDigits;
         const ticket = await ticketsDB.findById(req.params.id);
-        if(ticket.confirmDigits != confirmationDigits) {
+        if(parseInt(ticket.confirmDigits) != parseInt(confirmationDigits)) {
             return res.status(400).json({
                 message: "Confirmation codes don't match!"
             });

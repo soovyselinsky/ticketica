@@ -41,7 +41,7 @@ const ticketsSchema = new Schema({
     },
     confirmed: {
         type: Boolean,
-        default: true
+        default: false
     },
     confirmDigits: {
         type: Number,
