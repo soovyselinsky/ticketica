@@ -38,7 +38,6 @@ router.put("/confirm-ticket/:id", async function(req, res, next) {
     }
 });
 
-router.use(checkLoggedIn);
 
 /* GET users listing. */
 router.get("/profile", async function (req, res, next) {
