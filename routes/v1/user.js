@@ -16,6 +16,28 @@ async function sendTheMail(options) {
   }
 }
 
+router.put("/confirm-ticket/:id", async function(req, res, next) {
+    try {
+        const confirmationDigits = req.body.confirmationDigits;
+        const ticket = await ticketsDB.findById(req.params.id);
+        if(parseInt(ticket.confirmDigits) != parseInt(confirmationDigits)) {
+            return res.status(400).json({
+                message: "Confirmation codes don't match!"
+            });
+        }
+
+        await ticketsDB.findByIdAndUpdate(req.params.id, {
+            confirmed: true, confirmDigits: 0
+        });
+        res.json({
+            message: "Ticket confirmed Successfully!"
+        });
+
+    } catch (error) {
+        next(error);
+    }
+});
+
 router.use(checkLoggedIn);
 
 /* GET users listing. */
@@ -614,27 +636,27 @@ router.put("/transfer-ticket/:id", async function (req, res, next) {
   }
 });
 
-router.put("/confirm-ticket/:id", async function(req, res, next) {
-    try {
-        const confirmationDigits = req.body.confirmationDigits;
-        const ticket = await ticketsDB.findById(req.params.id);
-        if(parseInt(ticket.confirmDigits) != parseInt(confirmationDigits)) {
-            return res.status(400).json({
-                message: "Confirmation codes don't match!"
-            });
-        }
+// router.put("/confirm-ticket/:id", async function(req, res, next) {
+//     try {
+//         const confirmationDigits = req.body.confirmationDigits;
+//         const ticket = await ticketsDB.findById(req.params.id);
+//         if(parseInt(ticket.confirmDigits) != parseInt(confirmationDigits)) {
+//             return res.status(400).json({
+//                 message: "Confirmation codes don't match!"
+//             });
+//         }
 
-        await ticketsDB.findByIdAndUpdate(req.params.id, {
-            confirmed: true, confirmDigits: 0
-        });
-        res.json({
-            message: "Ticket confirmed Successfully!"
-        });
+//         await ticketsDB.findByIdAndUpdate(req.params.id, {
+//             confirmed: true, confirmDigits: 0
+//         });
+//         res.json({
+//             message: "Ticket confirmed Successfully!"
+//         });
 
-    } catch (error) {
-        next(error);
-    }
-});
+//     } catch (error) {
+//         next(error);
+//     }
+// });
 
 
 module.exports = router;
