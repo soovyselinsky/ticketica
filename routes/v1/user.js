@@ -3,7 +3,7 @@ var router = express.Router();
 const { usersDB } = require("../../models/authModel");
 const { ticketsDB } = require("../../models/ticketModel");
 const { transporter } = require("../../utilities/emailUtility");
-const { checkLoggedIn } = require("../../authenticationMiddlewares/loginAuth");
+// const { checkLoggedIn } = require("../../authenticationMiddlewares/loginAuth");
 const { theroles } = require("../../authenticationMiddlewares/accessControl");
 const moment = require("moment/moment");
 
@@ -15,6 +15,8 @@ async function sendTheMail(options) {
     console.log("An error occoured while trying to send the mail.");
   }
 }
+
+
 
 router.put("/confirm-ticket/:id", async function(req, res, next) {
     try {
@@ -38,6 +40,7 @@ router.put("/confirm-ticket/:id", async function(req, res, next) {
     }
 });
 
+// router.use(checkLoggedIn);
 
 /* GET users listing. */
 router.get("/profile", async function (req, res, next) {
