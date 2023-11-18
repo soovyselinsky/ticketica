@@ -3,7 +3,7 @@ var router = express.Router();
 const { usersDB } = require("../../models/authModel");
 const { ticketsDB } = require("../../models/ticketModel");
 const { transporter } = require("../../utilities/emailUtility");
-const { checkLoggedIn } = require("../../authenticationMiddlewares/loginAuth");
+// const { checkLoggedIn } = require("../../authenticationMiddlewares/loginAuth");
 const { theroles } = require("../../authenticationMiddlewares/accessControl");
 const moment = require("moment/moment");
 
@@ -16,44 +16,8 @@ async function sendTheMail(options) {
   }
 }
 
-
-// Middleware for confirming the ticket
-async function confirmTicket(req, res, next) {
-    try {
-      const ticketId = req.query.ticketid; // Extract ticketId from the query parameters
-      const confirmationDigits = req.body.confirmationDigits; // Assuming confirmationDigits is part of the request body
-  
-      const ticket = await ticketsDB.findById(ticketId);
-  
-      if (!ticket) {
-        return res.status(404).json({ message: "Ticket not found." });
-      }
-  
-      // Add your ticket confirmation logic here
-      // For example, compare confirmation codes
-      if (ticket.confirmDigits !== parseInt(confirmationDigits)) {
-        // If confirmation fails, return an appropriate response
-        return res.status(400).json({ message: "Confirmation codes don't match!" });
-      }
-  
-      // If confirmation is successful, update the ticket
-      await ticketsDB.findByIdAndUpdate(ticketId, {
-        confirmed: true,
-        confirmDigits: 0,
-      });
-  
-      // Continue to the next middleware
-      next();
-    } catch (error) {
-      next(error);
-    }
-  }
-
-// Middleware for confirming the ticket (place it before checkLoggedIn)
-router.use("/confirm-ticket/:id", confirmTicket);
-
 // Middleware to check if the user is logged in
-router.use(checkLoggedIn);
+// router.use(checkLoggedIn);
 
 /* GET users listing. */
 router.get("/profile", async function (req, res, next) {
@@ -649,27 +613,27 @@ router.put("/transfer-ticket/:id", async function (req, res, next) {
   }
 });
 
-// router.put("/confirm-ticket/:id", async function(req, res, next) {
-//     try {
-//         const confirmationDigits = req.body.confirmationDigits;
-//         const ticket = await ticketsDB.findById(req.params.id);
-//         if(parseInt(ticket.confirmDigits) != parseInt(confirmationDigits)) {
-//             return res.status(400).json({
-//                 message: "Confirmation codes don't match!"
-//             });
-//         }
+router.put("/confirm-ticket/:id", async function(req, res, next) {
+    try {
+        const confirmationDigits = req.body.confirmationDigits;
+        const ticket = await ticketsDB.findById(req.params.id);
+        if(parseInt(ticket.confirmDigits) != parseInt(confirmationDigits)) {
+            return res.status(400).json({
+                message: "Confirmation codes don't match!"
+            });
+        }
 
-//         await ticketsDB.findByIdAndUpdate(req.params.id, {
-//             confirmed: true, confirmDigits: 0
-//         });
-//         res.json({
-//             message: "Ticket confirmed Successfully!"
-//         });
+        await ticketsDB.findByIdAndUpdate(req.params.id, {
+            confirmed: true, confirmDigits: 0
+        });
+        res.json({
+            message: "Ticket confirmed Successfully!"
+        });
 
-//     } catch (error) {
-//         next(error);
-//     }
-// });
+    } catch (error) {
+        next(error);
+    }
+});
 
 
 module.exports = router;
