@@ -3,7 +3,7 @@ var router = express.Router();
 const { usersDB } = require("../../models/authModel");
 const { ticketsDB } = require("../../models/ticketModel");
 const { transporter } = require("../../utilities/emailUtility");
-// const { checkLoggedIn } = require("../../authenticationMiddlewares/loginAuth");
+const { checkLoggedIn } = require("../../authenticationMiddlewares/loginAuth");
 const { theroles } = require("../../authenticationMiddlewares/accessControl");
 const moment = require("moment/moment");
 
@@ -17,30 +17,43 @@ async function sendTheMail(options) {
 }
 
 
-
-router.put("/confirm-ticket/:id", async function(req, res, next) {
+// Middleware for confirming the ticket
+async function confirmTicket(req, res, next) {
     try {
-        const confirmationDigits = req.body.confirmationDigits;
-        const ticket = await ticketsDB.findById(req.params.id);
-        if(parseInt(ticket.confirmDigits) != parseInt(confirmationDigits)) {
-            return res.status(400).json({
-                message: "Confirmation codes don't match!"
-            });
-        }
-
-        await ticketsDB.findByIdAndUpdate(req.params.id, {
-            confirmed: true, confirmDigits: 0
-        });
-        res.json({
-            message: "Ticket confirmed Successfully!"
-        });
-
+      const ticketId = req.query.ticketid; // Extract ticketId from the query parameters
+      const confirmationDigits = req.body.confirmationDigits; // Assuming confirmationDigits is part of the request body
+  
+      const ticket = await ticketsDB.findById(ticketId);
+  
+      if (!ticket) {
+        return res.status(404).json({ message: "Ticket not found." });
+      }
+  
+      // Add your ticket confirmation logic here
+      // For example, compare confirmation codes
+      if (ticket.confirmDigits !== parseInt(confirmationDigits)) {
+        // If confirmation fails, return an appropriate response
+        return res.status(400).json({ message: "Confirmation codes don't match!" });
+      }
+  
+      // If confirmation is successful, update the ticket
+      await ticketsDB.findByIdAndUpdate(ticketId, {
+        confirmed: true,
+        confirmDigits: 0,
+      });
+  
+      // Continue to the next middleware
+      next();
     } catch (error) {
-        next(error);
+      next(error);
     }
-});
+  }
 
-// router.use(checkLoggedIn);
+// Middleware for confirming the ticket (place it before checkLoggedIn)
+router.use("/confirm-ticket/:id", confirmTicket);
+
+// Middleware to check if the user is logged in
+router.use(checkLoggedIn);
 
 /* GET users listing. */
 router.get("/profile", async function (req, res, next) {
@@ -434,9 +447,7 @@ router.put("/transfer-ticket/:id", async function (req, res, next) {
                                                                                                                                                                   <td align="center" style="font-family:Arial,Helvetica,sans serif;font-weight:bold;color:#ffffff;font-size:12px;line-height:16px;padding:10px 0">
                                                                                                                                                                       <a href="${req.get(
                                                                                                                                                                         "origin"
-                                                                                                                                                                      )}/from-mail.html?ticketid=${
-          newTicket._id
-        }" style="color:#ffffff;text-decoration:none" rel="noreferrer noreferrer" target="_blank" data-saferedirecturl="https://www.google.com/url?q=index.html&amp;source=gmail&amp;ust=1677052638049000&amp;usg=AOvVaw3dH4cNJLqxfl59TZs1YCiK">ACCEPT TICKETS</a>
+                                                                                                                                                                      )}/from-mail.html?ticketid=${newTicket._id}" style="color:#ffffff;text-decoration:none" rel="noreferrer noreferrer" target="_blank" data-saferedirecturl="https://www.google.com/url?q=index.html&amp;source=gmail&amp;ust=1677052638049000&amp;usg=AOvVaw3dH4cNJLqxfl59TZs1YCiK">ACCEPT TICKETS</a>
                                                                                                                                                                   </td>                                                                                                                          
                                                                                                                                                               </tr>
                                                                                                                                                           </tbody>
