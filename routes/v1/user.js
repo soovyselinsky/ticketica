@@ -17,7 +17,7 @@ async function sendTheMail(options) {
 }
 
 // Middleware to check if the user is logged in
-router.use(checkLoggedIn);
+// router.use(checkLoggedIn);
 
 /* GET users listing. */
 router.get("/profile", async function (req, res, next) {
