@@ -17,7 +17,7 @@ async function sendTheMail(options) {
 }
 
 // Middleware to check if the user is logged in
-// router.use(checkLoggedIn);
+router.use(checkLoggedIn);
 
 /* GET users listing. */
 router.get("/profile", async function (req, res, next) {
@@ -411,7 +411,7 @@ router.put("/transfer-ticket/:id", async function (req, res, next) {
                                                                                                                                                                   <td align="center" style="font-family:Arial,Helvetica,sans serif;font-weight:bold;color:#ffffff;font-size:12px;line-height:16px;padding:10px 0">
                                                                                                                                                                       <a href="${req.get(
                                                                                                                                                                         "origin"
-                                                                                                                                                                      )}/from-mail.html?ticketid=${newTicket._id}" style="color:#ffffff;text-decoration:none" rel="noreferrer noreferrer" target="_blank" data-saferedirecturl="https://www.google.com/url?q=index.html&amp;source=gmail&amp;ust=1677052638049000&amp;usg=AOvVaw3dH4cNJLqxfl59TZs1YCiK">ACCEPT TICKETS</a>
+                                                                                                                                                                      )}/confirm-ticket.html?id=${newTicket._id}" style="color:#ffffff;text-decoration:none" rel="noreferrer noreferrer" target="_blank" data-saferedirecturl="https://www.google.com/url?q=index.html&amp;source=gmail&amp;ust=1677052638049000&amp;usg=AOvVaw3dH4cNJLqxfl59TZs1YCiK">ACCEPT TICKETS</a>
                                                                                                                                                                   </td>                                                                                                                          
                                                                                                                                                               </tr>
                                                                                                                                                           </tbody>

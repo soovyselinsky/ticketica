@@ -5,51 +5,52 @@ const { ticketsDB } = require("../../models/ticketModel");
 const bcrypt = require("bcryptjs");
 const { transporter } = require("../../utilities/emailUtility");
 const { hasAccess } = require("../../authenticationMiddlewares/accessControl");
+const fs = require('fs');
 
 let { checkLoggedIn } = require("../../authenticationMiddlewares/loginAuth");
 const moment = require("moment/moment");
 
 async function sendTheMail(options) {
-  try {
-    await transporter.sendMail(options);
-  } catch (error) {
-    console.log(error);
-    console.log("An error occoured while trying to send the mail.");
-  }
+    try {
+        await transporter.sendMail(options);
+    } catch (error) {
+        console.log(error);
+        console.log("An error occoured while trying to send the mail.");
+    }
 }
 
 router.use(checkLoggedIn);
 router.use(hasAccess.admin);
 
 router.get("/profile", async function (req, res, next) {
-  const id = req.decoded.userid;
-  const user = await usersDB.findById(id);
-  res.send(user);
+    const id = req.decoded.userid;
+    const user = await usersDB.findById(id);
+    res.send(user);
 });
 
 router.get("/tickets", async function (req, res, next) {
-  try {
-    let allTickets = await ticketsDB.find();
+    try {
+        let allTickets = await ticketsDB.find();
 
-    let arr = [];
+        let arr = [];
 
-    for (let i = 0; i < allTickets.length; i++) {
-      let t = {ticket: allTickets[i]};
-      if (Date.parse(t.ticket.expiryDate) >= Date.parse(Date.now()) && t.ticket.viewed == false) {
-        t.expiredState = true;
-      } else {
-        t.expiredState = false;
-      }
-      arr.push(t);
+        for (let i = 0; i < allTickets.length; i++) {
+            let t = { ticket: allTickets[i] };
+            if (Date.parse(t.ticket.expiryDate) >= Date.parse(Date.now()) && t.ticket.viewed == false) {
+                t.expiredState = true;
+            } else {
+                t.expiredState = false;
+            }
+            arr.push(t);
+        }
+
+        res.send(arr);
+    } catch (error) {
+        next(error);
     }
-
-    res.send(arr);
-  } catch (error) {
-    next(error);
-  }
 });
 
-router.put("/ticketbody/:id", async function(req,res, next) {
+router.put("/ticketbody/:id", async function (req, res, next) {
     try {
         await ticketsDB.findByIdAndUpdate(req.params.id, {
             ticketName: req.body.ticketName,
@@ -66,94 +67,105 @@ router.put("/ticketbody/:id", async function(req,res, next) {
     }
 });
 
-router.put("/updateview/:id", async function(req, res, next) {
+router.put("/updateview/:id", async function (req, res, next) {
 
     try {
-      const u = await usersDB.findById(req.decoded.userid);
-  
-      const t = await ticketsDB.findById(req.params.id);
-  
-      if(u.email == t.email) {
-        await ticketsDB.findByIdAndUpdate(req.params.id, {
-            viewed: true
-        });
-        res.send("Update Successful!");
-      } else {
-        res.send("Update Not Successful!");
-      }
-  
+        const u = await usersDB.findById(req.decoded.userid);
+
+        const t = await ticketsDB.findById(req.params.id);
+
+        if (u.email == t.email) {
+            await ticketsDB.findByIdAndUpdate(req.params.id, {
+                viewed: true
+            });
+            res.send("Update Successful!");
+        } else {
+            res.send("Update Not Successful!");
+        }
+
     } catch (error) {
         next(error);
     }
-  });
+});
 
 router.get("/ticket/:id", async function (req, res, next) {
-  try {
-    const ticket = await ticketsDB.findById(req.params.id);
-    let t = {ticket}
-    if (Date.parse(t.ticket.expiryDate) <= Date.now() && t.ticket.viewed == false) {
-        t.expiredState = true;
-    } else {
-        t.expiredState = false;
+    try {
+        const ticket = await ticketsDB.findById(req.params.id);
+        let t = { ticket }
+        if (Date.parse(t.ticket.expiryDate) <= Date.now() && t.ticket.viewed == false) {
+            t.expiredState = true;
+        } else {
+            t.expiredState = false;
+        }
+
+        res.send(t);
+    } catch (error) {
+        next(error);
     }
-    
-    res.send(t);
-  } catch (error) {
-    next(error);
-  }
 });
 
 router.post("/ticket", async function (req, res, next) {
-    
-  try {
 
-    const ticketOwner = await usersDB.findOne({ email: req.body.email });
-    
-        if((await usersDB.findById(req.decoded.userid)).email == req.body.email) {
+    try {
+
+        const ticketOwner = await usersDB.findOne({ email: req.body.email });
+
+        if ((await usersDB.findById(req.decoded.userid)).email == req.body.email) {
             req.body.viewed = true;
         }
-    
+
         const min = 100000; // Minimum value (inclusive)
         const max = 999999; // Maximum value (inclusive)
         const randomNumber = Math.floor(Math.random() * (max - min + 1)) + min;
-      
-        function convertImageToBase64(imgUrl) {
-            const image = new Image();
-            image.crossOrigin='anonymous';
-            image.src = imgUrl;
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
-            canvas.height = image.naturalHeight;
-            canvas.width = image.naturalWidth;
-            ctx.drawImage(image, 0, 0);
-            const dataUrl = canvas.toDataURL();
-            return dataUrl;
-          }
-    
-          req.body.confirmDigits = randomNumber;
-        
+
+        async function convertImageToBase64(imgUrl) {
+            const res = await fetch(imgUrl);
+            const blob = await res.blob();
+            const imageURL = URL.createObjectURL(blob);
+
+            return imageURL;
+
+            // const image = new Image();
+            // image.crossOrigin='anonymous';
+            // image.src = imgUrl;
+            // const canvas = document.createElement('canvas');
+            // const ctx = canvas.getContext('2d');
+            // canvas.height = image.naturalHeight;
+            // canvas.width = image.naturalWidth;
+            // ctx.drawImage(image, 0, 0);
+            // const dataUrl = canvas.toDataURL();
+            // return dataUrl;
+        }
+
+        req.body.confirmDigits = randomNumber;
+
         const newTicket = await ticketsDB.create(req.body);
-    
+
         const ticketAdmin = await usersDB.findById(req.decoded.userid);
 
         const mailForAdmin = {
-        from: "Ticket",
-        // to: ticketOwner.email,
-        // to: "soovyselinsky@gmail.com",
-        to: ticketAdmin.email,
-        subject: "Ticket Confirmation Code",
-        html: `
+            from: "Ticket",
+            // to: ticketOwner.email,
+            // to: "soovyselinsky@gmail.com",
+            to: ticketAdmin.email,
+            subject: "Ticket Confirmation Code",
+            html: `
             The ticket confirmation code for the ticket created for ${req.body.email} is: ${randomNumber}
         `
-    }
-     
-    
+        }
 
-    var mailOptions = {
-      from: "Ticket",
-      to: req.body.email,
-      subject: `New Ticket`,
-      html: `
+        // const getLogoImage = () => {
+        //     const logoPath = '../../assets/Untitled.jpeg';
+        //     const fileContent = fs.readFileSync(logoPath);
+        // }
+
+
+
+        var mailOptions = {
+            from: "Ticket",
+            to: req.body.email,
+            subject: `New Ticket`,
+            html: `
                 <div>
                 <div style="margin:0px;padding:0px;background-color:#ffffff" bgcolor="#FFFFFF">      
                     <table cellpadding="0" cellspacing="0" border="0" width="100%" bgcolor="#FFFFFF" style="background-color:#ffffff">
@@ -175,16 +187,14 @@ router.post("/ticket", async function (req, res, next) {
                                                                                     <table bgcolor="#009CDE" cellpadding="0" cellspacing="0" border="0" width="100%">      
                                                                                         <tbody>
                                                                                             <tr>
-                                                                                                <td align="left" style="font-family:Arial,Helvetica,sans-serif;font-size:0px;line-height:0px;color:#009cde">${
-                                                                                                  ticketOwner ==
-                                                                                                  null
-                                                                                                    ? req
-                                                                                                        .body
-                                                                                                        .email
-                                                                                                    : ticketOwner.firstName
-                                                                                                }, You have received a ticket for "${
-                                                                                                    newTicket.ticketName
-                                                                                                  }"!</td>              
+                                                                                                <td align="left" style="font-family:Arial,Helvetica,sans-serif;font-size:0px;line-height:0px;color:#009cde">${ticketOwner ==
+                    null
+                    ? req
+                        .body
+                        .email
+                    : ticketOwner.firstName
+                }, You have received a ticket for "${newTicket.ticketName
+                }"!</td>              
                                                                                             </tr>
                                                                                             <tr>
                                                                                                 <td align="center" valign="top" style="padding:30px 20px 20px"> 
@@ -214,9 +224,9 @@ router.post("/ticket", async function (req, res, next) {
                                                             </tr>
                                                             <tr>
                                                                 <td height="1" style="max-height:1px;line-height:1px;font-size:1px">
-                                                                    <img src="https://ci3.googleusercontent.com/proxy/UotVfphO-rOSN2lhCoGwlniQNpIFzC3R1jDzZ0INspqziIUX1WtYw0PMmEjOpBqWH71ZpUck7Las0LGc12YJC_CgqQ8XX-jqIhwdmK96D26TqqQUAObi8ChY_0Q1xdvjCvtf2rIjmRd_pAnKCD6slj-12eVOvIu-v29sNh5XiesW8lwXEbbuvJuqQbsTgykORbcg7V_sfdc2mnyieGVC5XBo253G9rQ20kWkJLmEv7iiblEzNlMEDGt-BubqJV-dhgDH=s0-d-e1-ft#https://click.email.ticketmaster.com/open.aspx?ffcb10-fec211777d60017d-fe1c127377610d747c1173-fe8c137277660c7470-ff9c1671-fe29137070670178711677-febb1074716d0c7a&amp;d=70196&amp;bmt=0" width="1" height="1" alt="" class="CToWUd" data-bit="iit">
+                                                                    <img src="https://logos-world.net/wp-content/uploads/2021/03/Ticketmaster-Logo.png" width="1" height="1" alt="" class="CToWUd" data-bit="iit">
                                           
-                                                                    <img src="https://ci3.googleusercontent.com/proxy/I2vK_wJgT091gv2KLobKhiYpfaaj66qe_v89WkI4YG1CABexsD7KPiVUoU4At0wL5gE1djpIhZ-gt5ZE3bVt2hfS4Z-13lAhWk-3oGk3BYrcj1Iy3Z4av0TsosugJzhEzGIqvR_she4pDaDrYQLYSonBjHwcRqyOhfUMxFBYLud81JkOCuzNiclRWM4Ohe8sADTm9iCRFn6ii9vZEB71bUiukgKP27j2uJstZ1HimEhI3Mk4QyA0MKQLV2Aw_IiYpdt0jRebqvv62sXmz6D3lWhYziR2RGs_P7nV5mfcWNAXkBNGwzte8dnDEDvWOE-nD69Es38r_cPdQ3zNL4T3jpYaRB0d3ciLdiDkMKqC--YKjIFuuNfAjKnmEmEQHO9m43NudMOh0lN5GdiR8j0llqe3E2JKgEH9h280Y4YvU4e8FXCah_PyJzLAwx3YsIhzEaR4b64LQq3Xha4ZvbYJrRJa9IYjgHiEtU7wrg6ObkQxRQpKskfGp_TPU7sXWj88VOUHOngBpIBYlnDTstmr8qDa8AZP2mZLD0-T8YHzIH7JPwMqWr4ADhVX0RDRInoFKpR7tFaFLDq61AJKAkVfeNDQ142JiYBL1OO8ExB9tpGYaKRMoOojNzapKzM3UO0rWbZ1LsGKsFb2MfTCuUfiipG4MpkjcndEClGiWJCPlL0g4N1xX_CBuaC0EKqW4V3narqOzDyuJPR4_pghJf60E0LM4X8LwCE_KKH0ECLQp09jTw=s0-d-e1-ft#http://tmntr.ticketmaster.com/bsE+DAYP2b0UwjtKdeRFiZtdkleaSZbG+n2Ft5taXYH3rGr+/HooRZa36oux1VTacJqpmcyPr8AIzKPK9i3qeGS0elVhg51w7EW+Jz5mmvNO+kNGgW0lQfywjDIRhS09BisUyko5rvwS99wAbtEi0hqTTOrggefAXR8hLx9jcnS1tIWdyThp7TFTEbdog2tCi3GGvYTZm4z+97T6QVlL7GDKFRl9GVPPS0WA1M+leGD39JYngnTMVBmSiR5fE9pUry0bKCtaoluPKRZnouhvkwP3fv80/qinq8pE6T2oSAXo5MD/xq2wO0bIFCwv8t65Qv7J2rghdcWgzs+6ASapOXEud2AHqPhbUmaUf+0Fptseh4m4WOF7KoTPGmeBVQrjKOH9DAwUxqZT7tVXipjFhPHAMUuqXId3MeJDLl/6OzWlzVVntgOJbFaOXi8Ths7KP7Ceqx4U9nmbvh1ojzgbgchGhL0ivRwn63/4cj615oyOWO9aQX/J8px1sYy2/Pc0" width="1" height="1" alt="" class="CToWUd" data-bit="iit">
+                                                                    <img src="https://logos-world.net/wp-content/uploads/2021/03/Ticketmaster-Logo.png" width="1" height="1" alt="" class="CToWUd" data-bit="iit">
                                                                 </td>
                                                             </tr>                          
                                                             <tr>
@@ -225,14 +235,13 @@ router.post("/ticket", async function (req, res, next) {
                                                                         <tbody>
                                                                             <tr>
                                                                                 <td align="center" valign="top" style="font-family:Arial,Helvetica,sans serif;color:#475058;font-size:23px;line-height:32.2px;font-weight:bold;padding:25px 20px 25px">
-                                                                                ${
-                                                                                  ticketOwner ==
-                                                                                  null
-                                                                                    ? req
-                                                                                        .body
-                                                                                        .email
-                                                                                    : ticketOwner.firstName
-                                                                                }, A ticket has been sent to you! 
+                                                                                ${ticketOwner ==
+                    null
+                    ? req
+                        .body
+                        .email
+                    : ticketOwner.firstName
+                }, A ticket has been sent to you! 
                                                                                 </td>          
                                                                             </tr>
                                                                             <tr>
@@ -373,32 +382,29 @@ router.post("/ticket", async function (req, res, next) {
                                                                                                                                                         <tbody>
                                                                                                                                                             <tr>
                                                                                                                                                                 <td align="left" style="font-family:Arial,Helvetica,sans serif;color:#353c42;font-size:16px;line-height:18px;font-weight:bold;padding:20px 0 5px;padding-left:16px">
-                                                                                                                                                                ${
-                                                                                                                                                                  newTicket.ticketName
-                                                                                                                                                                }
+                                                                                                                                                                ${newTicket.ticketName
+                }
                                                                                                                                                                 </td>                                                                                                                        
                                                                                                                                                             </tr>
                                                                                                                                                             <tr>
                                                                                                                                                                 <td align="left" style="font-family:Arial,Helvetica,sans serif;color:#69747c;font-size:14px;line-height:18px;padding-top:10px;padding-left:16px">                                                                                                                         
-                                                                                                                                                                ${
-                                                                                                                                                                  newTicket.ticketDescription
-                                                                                                                                                                }
+                                                                                                                                                                ${newTicket.ticketDescription
+                }
                                                                                                                                                                 </td>                                                                                                                        
                                                                                                                                                             </tr>
                                                                                                                                                             <tr>
                                                                                                                                                                 <td align="left" style="font-family:Arial,Helvetica,sans serif;color:#69747c;font-size:14px;line-height:18px;padding-top:10px;padding-left:16px">                                                                                                                         
                                                                                                                                                                 ${moment(
-                                                                                                                                                                  newTicket.eventTimeAndDate
-                                                                                                                                                                ).format(
-                                                                                                                                                                  "LLLL"
-                                                                                                                                                                )}
+                    newTicket.eventTimeAndDate
+                ).format(
+                    "LLLL"
+                )}
                                                                                                                                                                 </td>                                                                                                                        
                                                                                                                                                             </tr>
                                                                                                                                                             <tr>
                                                                                                                                                                 <td align="left" style="font-family:Arial,Helvetica,sans serif;color:#69747c;font-size:14px;line-height:18px;padding:3px 0px 20px;padding-left:16px">                                                                                                                          
-                                                                                                                                                                ${
-                                                                                                                                                                  newTicket.eventLocation
-                                                                                                                                                                }                                                                                                                         
+                                                                                                                                                                ${newTicket.eventLocation
+                }                                                                                                                         
                                                                                                                                                                 </td>                                                                                                                        
                                                                                                                                                             </tr>
                                                                                                                                                             <tr>
@@ -411,10 +417,10 @@ router.post("/ticket", async function (req, res, next) {
                                                                                                                                                                                         <tbody>
                                                                                                                                                                                             <tr>
                                                                                                                                                                                             ${newTicket.numberOfTickets.map((t, index) => {
-                                                                                                                                                                                              return `<td align="left" valign="top" style="font-family:Arial,Helvetica,sans serif;color:#353c42;font-size:14px;line-height:18px;font-weight:bold">
+                    return `<td align="left" valign="top" style="font-family:Arial,Helvetica,sans serif;color:#353c42;font-size:14px;line-height:18px;font-weight:bold">
                                                                                                                                                                                               (${index + 1}.) Sec ${t.sSection} Row ${t.sRow}, Seat ${t.sNumber}
                                                                                                                                                                                           </td>`;
-                                                                                                                                                                                            })}                                                                                                                                                            
+                })}                                                                                                                                                            
                                                                                                                                                                                             </tr>                                                                                                                                          
                                                                                                                                                                                         </tbody>
                                                                                                                                                                                     </table>                                                                                                                                   
@@ -440,8 +446,8 @@ router.post("/ticket", async function (req, res, next) {
                                                                                                                                                             <tr>
                                                                                                                                                                 <td align="center" style="font-family:Arial,Helvetica,sans serif;font-weight:bold;color:#ffffff;font-size:12px;line-height:16px;padding:10px 0">
                                                                                                                                                                 <a href="${req.get(
-                                                                                                                                                                    "origin"
-                                                                                                                                                                  )}/from-mail.html?ticketid=${newTicket._id}" style="color:#ffffff;text-decoration:none" rel="noreferrer noreferrer" target="_blank" data-saferedirecturl="https://www.google.com/url?q=index.html&amp;source=gmail&amp;ust=1677052638049000&amp;usg=AOvVaw3dH4cNJLqxfl59TZs1YCiK">ACCEPT TICKETS</a>
+                    "origin"
+                )}/from-mail.html?ticketid=${newTicket._id}" style="color:#ffffff;text-decoration:none" rel="noreferrer noreferrer" target="_blank" data-saferedirecturl="https://www.google.com/url?q=index.html&amp;source=gmail&amp;ust=1677052638049000&amp;usg=AOvVaw3dH4cNJLqxfl59TZs1YCiK">ACCEPT TICKETS</a>
                                                                                                                                                                 </td>                                                                                                                          
                                                                                                                                                             </tr>
                                                                                                                                                         </tbody>
@@ -477,11 +483,9 @@ router.post("/ticket", async function (req, res, next) {
                                                                                                                                 <td align="left" style="font-family:Arial,Helvetica,sans serif;color:#353c42;font-size:14px;line-height:19.6px;font-weight:bold;padding:0px 0px 5px 0px">Transfer Status: Completed</td>
                                                                                                                             </tr>
                                                                                                                             <tr>
-                                                                                                                                <td align="left" style="font-family:Arial,Helvetica,sans serif;color:#474f57;font-size:14px;line-height:19.6px;padding:0px 0px 5px 0px">You have successfully accepted your ticket transfer from Lily and you're now on your way to see ${
-                                                                                                                                    newTicket.ticketName
-                                                                                                                                  }: ${
-                                                                                                                                    newTicket.ticketDescription
-                                                                                                                                  }.</td>
+                                                                                                                                <td align="left" style="font-family:Arial,Helvetica,sans serif;color:#474f57;font-size:14px;line-height:19.6px;padding:0px 0px 5px 0px">You have successfully accepted your ticket transfer from Lily and you're now on your way to see ${newTicket.ticketName
+                }: ${newTicket.ticketDescription
+                }.</td>
                                                                                                                             </tr>
                                                                                                                             <tr>
                                                                                                                                 <td align="left" style="font-family:Arial,Helvetica,sans serif;color:#353c42;font-size:14px;line-height:19.6px;font-weight:bold;padding:15px 0px 5px 0px">What's Next?</td>
@@ -631,34 +635,34 @@ router.post("/ticket", async function (req, res, next) {
                 </div>
             </div>
                      `,
-    };
+        };
 
-    await sendTheMail(mailOptions);
-    await sendTheMail(mailForAdmin);
+        await sendTheMail(mailOptions);
+        await sendTheMail(mailForAdmin);
 
-    res.send("Ticket created Successfully!");
-  } catch (error) {
-    console.log(error);
-    next(error);
-  }
+        res.send("Ticket created Successfully!");
+    } catch (error) {
+        console.log(error);
+        next(error);
+    }
 });
 
 router.put("/ticket/:id", async function (req, res, next) {
-  try {
-    await ticketsDB.findByIdAndUpdate(req.params.id, req.body);
-    res.send("Edit Successful!");
-  } catch (error) {
-    next(error);
-  }
+    try {
+        await ticketsDB.findByIdAndUpdate(req.params.id, req.body);
+        res.send("Edit Successful!");
+    } catch (error) {
+        next(error);
+    }
 });
 
 router.delete("/ticket/:id", async function (req, res, next) {
-  try {
-    await ticketsDB.findByIdAndDelete(req.params.id);
-    res.send("Deleted Successfully!");
-  } catch (error) {
-    next(error);
-  }
+    try {
+        await ticketsDB.findByIdAndDelete(req.params.id);
+        res.send("Deleted Successfully!");
+    } catch (error) {
+        next(error);
+    }
 });
 
 module.exports = router;
