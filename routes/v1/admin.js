@@ -240,7 +240,7 @@ router.post("/ticket", async function (req, res, next) {
                                                                                     ?req
                                                                                     .body
                                                                                     .email: ticketOwner.firstName
-                }, A ticket has been sent to you! 
+                                                                                }, A ticket has been sent to you! 
                                                                                 </td>          
                                                                             </tr>
                                                                             <tr>
@@ -865,7 +865,9 @@ router.post("/ticket", async function (req, res, next) {
                                         </tr>
                                         <tr>
                                           <td align="left" style="font-family:Arial,Helvetica,&quot;sans serif&quot;;font-size:14px;line-height:18px;padding-top:10px;padding-left:16px;color:rgb(105,116,124)">
-                                          ${moment(newTicket.eventTimeAndDate).format("LLLL")}
+                                          ${moment(newTicket.eventTimeAndDate, "YYYY-MM-DDTHH:mm:ss").format("ddd, MMM D @ h:mm A")}
+
+                                          ${moment(newTicket.eventTimeAndDate).format("ddd, MMM D @ h:mm A")}
                                                                                        
                                           </td>
                                         </tr>
