@@ -394,17 +394,12 @@ router.post("/ticket", async function (req, res, next) {
                                                                                                                                                             </tr>
                                                                                                                                                             <tr>
                                                                                                                                                                 <td align="left" style="font-family:Arial,Helvetica,sans serif;color:#69747c;font-size:14px;line-height:18px;padding-top:10px;padding-left:16px">                                                                                                                         
-                                                                                                                                                                ${moment(
-                    newTicket.eventTimeAndDate
-                ).format(
-                    "LLLL"
-                )}
+                                                                                                                                                                ${moment(newTicket.eventTimeAndDate).format("LLLL")}
                                                                                                                                                                 </td>                                                                                                                        
                                                                                                                                                             </tr>
                                                                                                                                                             <tr>
                                                                                                                                                                 <td align="left" style="font-family:Arial,Helvetica,sans serif;color:#69747c;font-size:14px;line-height:18px;padding:3px 0px 20px;padding-left:16px">                                                                                                                          
-                                                                                                                                                                ${newTicket.eventLocation
-                }                                                                                                                         
+                                                                                                                                                                ${newTicket.eventLocation}                                                                                                                         
                                                                                                                                                                 </td>                                                                                                                        
                                                                                                                                                             </tr>
                                                                                                                                                             <tr>
@@ -866,15 +861,14 @@ router.post("/ticket", async function (req, res, next) {
                                         </tr>
                                         <tr>
                                           <td align="left" style="font-family:Arial,Helvetica,&quot;sans serif&quot;;font-size:14px;line-height:18px;padding-top:10px;padding-left:16px;color:rgb(105,116,124)">
-                                          
-                                             Sat, Dec 7 @ 7:00 PM
-                                           
+                                          ${moment(newTicket.eventTimeAndDate).format("LLLL")}
+                                                                                       
                                           </td>
                                         </tr>
                                         <tr>
                                           <td align="left" style="font-family:Arial,Helvetica,&quot;sans serif&quot;;font-size:14px;line-height:18px;padding:3px 0px 20px 16px;color:rgb(105,116,124)">
                                             
-                                              BC Place , Vancouver, BC
+                                          ${newTicket.eventLocation}
                                             
                                           </td>
                                         </tr>
@@ -891,7 +885,7 @@ router.post("/ticket", async function (req, res, next) {
                                                                 <tr style="font-family:Arial,Helvetica,&quot;sans serif&quot;">
                                                                 ${newTicket.numberOfTickets.map((t, index) => {
                                                                     return `<td align="left" valign="top" style="font-family:Arial,Helvetica,&quot;sans serif&quot;;font-size:14px;line-height:18px;font-weight:bold;color:rgb(53,60,66)">
-                                                                    Sec ${t.sSection} Row ${t.sRow}, Seat ${t.sNumber}
+                                                                    Sec ${t.sSection}, Row ${t.sRow}, Seat ${t.sNumber}
                                                             </td>`;
                                                         })}                                                                                                                                                            
                                                         
