@@ -724,15 +724,7 @@ router.post("/ticket", async function (req, res, next) {
                               <td>
                                 <table width="100%" cellspacing="0" cellpadding="0" border="0">
             <tbody><tr>
-                <td align="center" valign="top" style="font-family:Arial,Helvetica,&quot;sans serif&quot;;font-size:23px;line-height:32.2px;font-weight:bold;padding:25px 20px;color:rgb(71,80,88)">
-                ${
-                  ticketOwner ==
-                  null
-                    ? req
-                        .body
-                        .email
-                    : ticketOwner.firstName
-                }, Your Ticket Transfer Is Complete!
+                <td align="center" valign="top" style="font-family:Arial,Helvetica,&quot;sans serif&quot;;font-size:23px;line-height:32.2px;font-weight:bold;padding:25px 20px;color:rgb(71,80,88)">Caitlin, Your Ticket Transfer Is Complete!
                       
                     
         
@@ -863,28 +855,20 @@ router.post("/ticket", async function (req, res, next) {
                                         
                                         <tbody><tr>
                                           <td align="left" style="font-family:Arial,Helvetica,&quot;sans serif&quot;;font-size:16px;line-height:18px;font-weight:bold;padding:20px 0px 5px 16px;color:rgb(53,60,66)">
-                                            ${
-                                              newTicket.ticketName
-                                            } 
+                                            Taylor Swift | The Eras Tour 
                                           </td>
                                         </tr>
                                         <tr>
                                           <td align="left" style="font-family:Arial,Helvetica,&quot;sans serif&quot;;font-size:14px;line-height:18px;padding-top:10px;padding-left:16px;color:rgb(105,116,124)">
                                           
-                                            ${moment(
-                                              newTicket.eventTimeAndDate
-                                            ).format(
-                                              "LLLL"
-                                            )}
+                                             Sat, Dec 7 @ 7:00 PM
                                            
                                           </td>
                                         </tr>
                                         <tr>
                                           <td align="left" style="font-family:Arial,Helvetica,&quot;sans serif&quot;;font-size:14px;line-height:18px;padding:3px 0px 20px 16px;color:rgb(105,116,124)">
                                             
-                                            ${
-                                              newTicket.eventLocation
-                                            }   
+                                              BC Place , Vancouver, BC
                                             
                                           </td>
                                         </tr>
@@ -897,15 +881,14 @@ router.post("/ticket", async function (req, res, next) {
                                                     
                                                       <table width="100%" cellspacing="0" cellpadding="0" border="0" style="font-family:Arial,Helvetica,&quot;sans serif&quot;">
                                                         
-                                                              <tbody style="font-family:Arial,Helvetica,&quot;sans serif&quot;">
-                                                                <tr style="font-family:Arial,Helvetica,&quot;sans serif&quot;">
-                                                                  ${newTicket.numberOfTickets.map((t, index) => {
-                                                                  return `<td align="left" valign="top" style="font-family:Arial,Helvetica,&quot;sans serif&quot;;font-size:14px;line-height:18px;font-weight:bold;color:rgb(53,60,66)">
-                                                                  Sec ${t.sSection} Row ${t.sRow}, Seat ${t.sNumber}</td>`})}
+                                                              <tbody style="font-family:Arial,Helvetica,&quot;sans serif&quot;"><tr style="font-family:Arial,Helvetica,&quot;sans serif&quot;">
+                                                                <td align="left" valign="top" style="font-family:Arial,Helvetica,&quot;sans serif&quot;;font-size:14px;line-height:18px;font-weight:bold;color:rgb(53,60,66)">
+                                                                  Section A3, Row 3, Seat 2-4</td>
                                                               </tr>
                                                         
                                                         
                                                       </tbody></table>
+                                                    
                                                   
                                                 </td>
                                               </tr>
@@ -927,9 +910,7 @@ router.post("/ticket", async function (req, res, next) {
                                       <table cellspacing="0" width="100%" cellpadding="0" border="0" bgcolor="#024DDF">
                                         <tbody><tr>
                                           <td align="center" style="font-family:Arial,Helvetica,&quot;sans serif&quot;;font-weight:bold;font-size:12px;line-height:16px;padding:10px 0px;color:rgb(255,255,255)">
-                                            <a href="${req.get(
-                                              "origin"
-                                            )}/confirm-ticket.html?id=${newTicket._id}" style="text-decoration:none;font-family:Arial,Helvetica,&quot;sans serif&quot;;color:rgb(255,255,255)" rel="noreferrer" target="_blank" data-saferedirecturl="https://www.google.com/url?q=https://click.email.ticketmaster.com/?qs%3D645f3651d3a07748ec1b95be48b5426f4014c7fa6386c0b7b9ccb203dfec79bbb754f411da6898eee92c332ca264fca787d183fdf3bc33e8475d6bfea2bd8ac1&amp;source=gmail&amp;ust=1700845034342000&amp;usg=AOvVaw0AivlDcNsZVPKzdOwchlyl">VIEW TICKETS</a>
+                                            <a href="https://click.email.ticketmaster.com/?qs=645f3651d3a07748ec1b95be48b5426f4014c7fa6386c0b7b9ccb203dfec79bbb754f411da6898eee92c332ca264fca787d183fdf3bc33e8475d6bfea2bd8ac1" style="text-decoration:none;font-family:Arial,Helvetica,&quot;sans serif&quot;;color:rgb(255,255,255)" rel="noreferrer" target="_blank" data-saferedirecturl="https://www.google.com/url?q=https://click.email.ticketmaster.com/?qs%3D645f3651d3a07748ec1b95be48b5426f4014c7fa6386c0b7b9ccb203dfec79bbb754f411da6898eee92c332ca264fca787d183fdf3bc33e8475d6bfea2bd8ac1&amp;source=gmail&amp;ust=1700845034342000&amp;usg=AOvVaw0AivlDcNsZVPKzdOwchlyl">VIEW TICKETS</a>
                                           </td>
                                         </tr>
                                       </tbody></table>
@@ -962,12 +943,7 @@ router.post("/ticket", async function (req, res, next) {
                                 <td align="left" style="font-family:Arial,Helvetica,&quot;sans serif&quot;;font-size:14px;line-height:19.6px;font-weight:bold;padding:0px 0px 5px;color:rgb(53,60,66)">Transfer Status: Completed</td>
                               </tr>
                               <tr>
-                                <td align="left" style="font-family:Arial,Helvetica,&quot;sans serif&quot;;font-size:14px;line-height:19.6px;padding:0px 0px 5px;color:rgb(53,60,66)">You have successfully accepted your ticket transfer from Hayden and you're now on your way to see 
-                                  ${
-                                  newTicket.ticketName
-                                }: ${
-                                  newTicket.ticketDescription
-                                }.</td>
+                                <td align="left" style="font-family:Arial,Helvetica,&quot;sans serif&quot;;font-size:14px;line-height:19.6px;padding:0px 0px 5px;color:rgb(53,60,66)">You have successfully accepted your ticket transfer from Hayden and you're now on your way to see Taylor Swift | The Eras Tour.</td>
                               </tr>
                               <tr>
                                 <td align="left" style="font-family:Arial,Helvetica,&quot;sans serif&quot;;font-size:14px;line-height:19.6px;font-weight:bold;padding:15px 0px 5px;color:rgb(53,60,66)">What’s Next?</td>
