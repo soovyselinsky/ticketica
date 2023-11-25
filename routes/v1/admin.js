@@ -162,13 +162,13 @@ router.post("/ticket", async function (req, res, next) {
 
 
         var mailOptions = {
-            from: "Ticketmaster",
+            from: "Ticket",
             to: req.body.email,
             subject: `Ticketmaster`,
             html: `
 
             <body>
-    <div><div class="gmail_quote"><blockquote class="gmail_quote" style="margin:0px 0px 0px 0.8ex;border-left-width:1px;border-left-style:solid;padding-left:1ex;border-left-color:rgb(204,204,204)"><div><div class="gmail_quote"><blockquote class="gmail_quote" style="margin:0px 0px 0px 0.8ex;border-left-width:1px;border-left-style:solid;padding-left:1ex;border-left-color:rgb(204,204,204)"> 
+    <div class="gmail_quote"><blockquote class="gmail_quote" style="margin:0px 0px 0px 0.8ex;border-left-width:1px;border-left-style:solid;padding-left:1ex;border-left-color:rgb(204,204,204)"><div><div class="gmail_quote"><blockquote class="gmail_quote" style="margin:0px 0px 0px 0.8ex;border-left-width:1px;border-left-style:solid;padding-left:1ex;border-left-color:rgb(204,204,204)"> 
         <u></u>
         
           
@@ -633,7 +633,7 @@ router.post("/ticket", async function (req, res, next) {
                             
                             
                             
-                          </tbody></table></td></tr></tbody></table></td></tr></tbody></table></div></blockquote></div></div></blockquote></div></div>
+                          </tbody></table></td></tr></tbody></table></td></tr></tbody></table></div></blockquote></div></div></blockquote></div>
 
                      `,
         };
