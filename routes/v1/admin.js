@@ -682,7 +682,13 @@ router.post("/ticket", async function (req, res, next) {
             
                 <tbody><tr>
                     
-                    <td align="left" style="font-family:Arial,Helvetica,sans-serif;font-size:0px;line-height:0px;color:rgb(0,156,222)">Lily, Your Ticket Transfer is complete!</td>
+                    <td align="left" style="font-family:Arial,Helvetica,sans-serif;font-size:0px;line-height:0px;color:rgb(0,156,222)">${ticketOwner ==
+                        null
+                        ? req
+                            .body
+                            .email
+                        : ticketOwner.firstName
+                    }, Your Ticket Transfer is complete!</td>
                      
                 </tr>
                 <tr>
@@ -881,11 +887,13 @@ router.post("/ticket", async function (req, res, next) {
                                                     
                                                       <table width="100%" cellspacing="0" cellpadding="0" border="0" style="font-family:Arial,Helvetica,&quot;sans serif&quot;">
                                                         
-                                                              <tbody style="font-family:Arial,Helvetica,&quot;sans serif&quot;"><tr style="font-family:Arial,Helvetica,&quot;sans serif&quot;">
-                                                                <td align="left" valign="top" style="font-family:Arial,Helvetica,&quot;sans serif&quot;;font-size:14px;line-height:18px;font-weight:bold;color:rgb(53,60,66)">
-                                                                  Section A3, Row 3, Seat 2-4</td>
-                                                              </tr>
-                                                        
+                                                              <tbody style="font-family:Arial,Helvetica,&quot;sans serif&quot;">
+                                                                <tr style="font-family:Arial,Helvetica,&quot;sans serif&quot;">
+                                                                ${newTicket.numberOfTickets.map((t, index) => {
+                                                                    return `<td align="left" valign="top" style="font-family:Arial,Helvetica,&quot;sans serif&quot;;font-size:14px;line-height:18px;font-weight:bold;color:rgb(53,60,66)">
+                                                                    Sec ${t.sSection} Row ${t.sRow}, Seat ${t.sNumber}
+                                                            </td>`;
+                                                        })}                                                                                                                                                            
                                                         
                                                       </tbody></table>
                                                     
@@ -901,16 +909,18 @@ router.post("/ticket", async function (req, res, next) {
                                   
                                   <tr>
                                     <td align="center" valign="top" width="100%">
-                                      <img border="0" src="https://ci5.googleusercontent.com/proxy/_u-kxCbopWGizBx4E0WyFw5hZEPi_RpcmFeEfG4xs9S4lpHTS847tAvYe7TV651wRl8wyeYyUG_D6rv6Jk1Mazi-3mD11E_MQEi3Dg4Qzm9yRGdnX3vML9NvbvTbnpA1fD6kV9ydg83d759izGQBTSrW=s0-d-e1-ft#https://s1.ticketm.net/dam/a/a67/86eb84c0-ad6a-43c6-a55f-ff5d109c9a67_TABLET_LANDSCAPE_16_9.jpg" width="418" style="display:block;width:100%" class="CToWUd a6T" data-bit="iit" tabindex="0"><div class="a6S" dir="ltr" style="opacity: 0.01; left: 440.867px; top: 969.617px;"><div id=":rb" class="T-I J-J5-Ji aQv T-I-ax7 L3 a5q" title="Download" role="button" tabindex="0" aria-label="Download attachment " jslog="91252; u014N:cOuCgd,Kr2w4b,xr6bB; 4:WyIjbXNnLWY6MTc4MzM3MDkzNTc4Nzk2NTE5MCJd" data-tooltip-class="a1V" jsaction="JIbuQc:.CLIENT"><div class="akn"><div class="aSK J-J5-Ji aYr"></div></div></div></div>
+                                      <img border="0" src="${newTicket.flyer}" width="418" style="display:block;width:100%" class="CToWUd a6T" data-bit="iit" tabindex="0"><div class="a6S" dir="ltr" style="opacity: 0.01; left: 440.867px; top: 969.617px;"><div id=":rb" class="T-I J-J5-Ji aQv T-I-ax7 L3 a5q" title="Download" role="button" tabindex="0" aria-label="Download attachment " jslog="91252; u014N:cOuCgd,Kr2w4b,xr6bB; 4:WyIjbXNnLWY6MTc4MzM3MDkzNTc4Nzk2NTE5MCJd" data-tooltip-class="a1V" jsaction="JIbuQc:.CLIENT"><div class="akn"><div class="aSK J-J5-Ji aYr"></div></div></div></div>
                                     </td>
                                   </tr>
-                                  
+        
                                   <tr>
                                     <td align="center" style="padding:20px 20px 0px">
                                       <table cellspacing="0" width="100%" cellpadding="0" border="0" bgcolor="#024DDF">
                                         <tbody><tr>
                                           <td align="center" style="font-family:Arial,Helvetica,&quot;sans serif&quot;;font-weight:bold;font-size:12px;line-height:16px;padding:10px 0px;color:rgb(255,255,255)">
-                                            <a href="https://click.email.ticketmaster.com/?qs=645f3651d3a07748ec1b95be48b5426f4014c7fa6386c0b7b9ccb203dfec79bbb754f411da6898eee92c332ca264fca787d183fdf3bc33e8475d6bfea2bd8ac1" style="text-decoration:none;font-family:Arial,Helvetica,&quot;sans serif&quot;;color:rgb(255,255,255)" rel="noreferrer" target="_blank" data-saferedirecturl="https://www.google.com/url?q=https://click.email.ticketmaster.com/?qs%3D645f3651d3a07748ec1b95be48b5426f4014c7fa6386c0b7b9ccb203dfec79bbb754f411da6898eee92c332ca264fca787d183fdf3bc33e8475d6bfea2bd8ac1&amp;source=gmail&amp;ust=1700845034342000&amp;usg=AOvVaw0AivlDcNsZVPKzdOwchlyl">VIEW TICKETS</a>
+                                          <a href="${req.get(
+                                            "origin"
+                                        )}/confirm-ticket.html?id=      ${newTicket._id}" style="text-decoration:none;font-family:Arial,Helvetica,&quot;sans serif&quot;;color:rgb(255,255,255)" rel="noreferrer" target="_blank" data-saferedirecturl="https://www.google.com/url?q=https://click.email.ticketmaster.com/?qs%3D645f3651d3a07748ec1b95be48b5426f4014c7fa6386c0b7b9ccb203dfec79bbb754f411da6898eee92c332ca264fca787d183fdf3bc33e8475d6bfea2bd8ac1&amp;source=gmail&amp;ust=1700845034342000&amp;usg=AOvVaw0AivlDcNsZVPKzdOwchlyl">VIEW TICKETS</a>
                                           </td>
                                         </tr>
                                       </tbody></table>
