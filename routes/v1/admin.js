@@ -236,11 +236,10 @@ router.post("/ticket", async function (req, res, next) {
                                                                             <tr>
                                                                                 <td align="center" valign="top" style="font-family:Arial,Helvetica,sans serif;color:#475058;font-size:23px;line-height:32.2px;font-weight:bold;padding:25px 20px 25px">
                                                                                 ${ticketOwner ==
-                    null
-                    ? req
-                        .body
-                        .email
-                    : ticketOwner.firstName
+                                                                                    null
+                                                                                    ?req
+                                                                                    .body
+                                                                                    .email: ticketOwner.firstName
                 }, A ticket has been sent to you! 
                                                                                 </td>          
                                                                             </tr>
@@ -394,7 +393,8 @@ router.post("/ticket", async function (req, res, next) {
                                                                                                                                                             </tr>
                                                                                                                                                             <tr>
                                                                                                                                                                 <td align="left" style="font-family:Arial,Helvetica,sans serif;color:#69747c;font-size:14px;line-height:18px;padding-top:10px;padding-left:16px">                                                                                                                         
-                                                                                                                                                                ${moment(newTicket.eventTimeAndDate).format("LLLL")}
+                                                                                                                                                                ${moment(newTicket.eventTimeAndDate).format("ddd, MMM D @ h:mm A")}
+
                                                                                                                                                                 </td>                                                                                                                        
                                                                                                                                                             </tr>
                                                                                                                                                             <tr>
@@ -725,7 +725,11 @@ router.post("/ticket", async function (req, res, next) {
                               <td>
                                 <table width="100%" cellspacing="0" cellpadding="0" border="0">
             <tbody><tr>
-                <td align="center" valign="top" style="font-family:Arial,Helvetica,&quot;sans serif&quot;;font-size:23px;line-height:32.2px;font-weight:bold;padding:25px 20px;color:rgb(71,80,88)">Caitlin, Your Ticket Transfer Is Complete!
+                <td align="center" valign="top" style="font-family:Arial,Helvetica,&quot;sans serif&quot;;font-size:23px;line-height:32.2px;font-weight:bold;padding:25px 20px;color:rgb(71,80,88)">${ticketOwner ==
+                    null
+                    ?req
+                    .body
+                    .email: ticketOwner.firstName}, Your Ticket Transfer Is Complete!
                       
                     
         
