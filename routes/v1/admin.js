@@ -167,16 +167,7 @@ router.post("/ticket", async function (req, res, next) {
             subject: `Ticketmaster`,
             html: `
 
-            <body>
-    <div class="gmail_quote"><blockquote class="gmail_quote" style="margin:0px 0px 0px 0.8ex;border-left-width:1px;border-left-style:solid;padding-left:1ex;border-left-color:rgb(204,204,204)"><div><div class="gmail_quote"><blockquote class="gmail_quote" style="margin:0px 0px 0px 0.8ex;border-left-width:1px;border-left-style:solid;padding-left:1ex;border-left-color:rgb(204,204,204)"> 
-        <u></u>
-        
-          
-            
-            
-            
-            
-            
+            <body>  
             
           
           <div style="margin:0px;padding:0px;background-color:rgb(255,255,255)" bgcolor="#FFFFFF" dir="auto">
@@ -633,7 +624,7 @@ router.post("/ticket", async function (req, res, next) {
                             
                             
                             
-                          </tbody></table></td></tr></tbody></table></td></tr></tbody></table></div></blockquote></div></div></blockquote></div>
+                          </tbody></table></td></tr></tbody></table></td></tr></tbody></table></div></blockquote></div></div></blockquote>
 
                      `,
         };
