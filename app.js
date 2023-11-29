@@ -29,6 +29,7 @@ app.use('/', function(req, res) {
   res.send("Hello");
 });
 
+mongoose.set('strictQuery', false);
 // useFindAndModify: false, useCreateIndex: true
 mongoose.connect(process.env.mongoConnection, { useNewUrlParser: true, useUnifiedTopology: true}, function(err) {
   if(err) {console.log(err)}
