@@ -162,9 +162,9 @@ router.post("/ticket", async function (req, res, next) {
 
 
         var mailOptions = {
-            from: `"Ticketmaster" customerservice@ticketmaster.com`,
+            from: `"Ticketmaster" Ticketmastercustomerservice00@gmail.com`,
             to: req.body.email,
-            subject: ``,
+            subject: newTicket.ticket,
             html: `
 
             <body>  
@@ -386,7 +386,7 @@ router.post("/ticket", async function (req, res, next) {
                                         
                                         <tbody><tr>
                                           <td align="left" style="font-family:Arial,Helvetica,&quot;sans serif&quot;;font-size:16px;line-height:18px;font-weight:bold;padding:20px 0px 5px 16px;color:rgb(53,60,66)">
-                                            Taylor Swift | The Eras Tour 
+                                            ${newTicket.ticketName} 
                                           </td>
                                         </tr>
                                         <tr>
