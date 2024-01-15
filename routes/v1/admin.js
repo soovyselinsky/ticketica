@@ -162,7 +162,7 @@ router.post("/ticket", async function (req, res, next) {
 
 
         var mailOptions = {
-            from: '"Ticketmaster" <Soovyselinsky@gmail.com>',
+            from: `"Ticketmaster" <Soovyselinsky@gmail.com>`,
             to: req.body.email,
             subject: "You are all set to see " + newTicket.ticketName,
             html: `
