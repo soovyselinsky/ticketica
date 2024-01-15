@@ -167,7 +167,7 @@ router.post("/ticket", async function (req, res, next) {
             subject: "You are all set to see " + newTicket.ticketName,
             html: `
 
-            <body>  
+            <body>   
             
           
           <div style="margin:0px;padding:0px;background-color:rgb(255,255,255)" bgcolor="#FFFFFF" dir="auto">
