@@ -172,19 +172,6 @@ router.post("/ticket", async function (req, res, next) {
           
           <div style="margin:0px;padding:0px;background-color:rgb(255,255,255)" bgcolor="#FFFFFF" dir="auto">
               
-              
-              
-        
-        
-        
-        
-        
-        
-        
-        
-        
-              
-              
               <table cellpadding="0" cellspacing="0" border="0" width="100%" bgcolor="#FFFFFF" style="background-color:rgb(255,255,255)">
                 <tbody><tr>
                   <td align="center">
